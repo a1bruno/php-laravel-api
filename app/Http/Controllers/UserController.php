@@ -8,7 +8,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -47,6 +46,7 @@ class UserController extends Controller
             $user->save();
 
             return response()->json([
+                'user_data' => [$user->toResource()],
                 "message" => "user created successfully"
             ], 201);
         } catch (Exception $ex) {
@@ -64,7 +64,7 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            return response()->json($user, 200);
+            return response()->json($user->toResource(), 200);
         } catch (Exception $ex) {
             return response()->json([
                 "message" => "user not found"
