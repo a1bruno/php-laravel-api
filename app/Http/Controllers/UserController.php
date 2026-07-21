@@ -16,11 +16,16 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $users = User::all();
-            return response()->json($users, 200);
+            $currentPage = $request->get('current_page') ?? 1;
+            $regsPerPage = 3;
+
+            $skip = ($currentPage - 1) * $regsPerPage;
+
+            $users = User::skip($skip)->take($regsPerPage)->orderByDesc('id')->get();
+            return response()->json($users->toResourceCollection(), 200);
         } catch (Exception $ex) {
             return response()->json([
                 "message" => "there are no users"
